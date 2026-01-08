@@ -1,0 +1,45 @@
+package com.example.web.service;
+
+import com.example.web.entity.UserInfo;
+import com.example.web.repository.UserInfoRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+@AllArgsConstructor
+public class UserInfoService implements UserDetailsService {
+
+    private PasswordEncoder encoder;
+    private UserInfoRepository userRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
+        Optional<UserInfo> userInfo = userRepository.findByEmail(username);
+        if(userInfo.isEmpty()){
+            throw new UsernameNotFoundException("User not found for email : "+ username);
+        }
+
+        //now we got userInfo object
+        UserInfo user = userInfo.get();
+//        List<GrantedAuthority> authorities =
+//                List.of(new SimpleGrantedAuthority(user.getRoles()));
+        //Spring security understands UserDetails
+//        return new User(user.getEmail(),user.getPassword(),authorities);
+        return new UserInfoDetails(user);
+    }
+    public String addUser(UserInfo userInfo){
+        userInfo.setPassword(encoder.encode(userInfo.getPassword()));
+        userRepository.save(userInfo);
+        return "User added successfully";
+    }
+}
