@@ -51,5 +51,5 @@ This diagram explains:
 
 ---
 
-LinkedIn share: 
+LinkedIn post: 
 https://www.linkedin.com/posts/vanipenta-bhanuprakash-reddy-726a38204_springboot-springsecurity-jwt-activity-7415462121347403776-IGJ9?utm_source=share&utm_medium=member_android&rcm=ACoAADQfZQ4BFlIIEXfWTty4ph9iPdeu07kCJE0
