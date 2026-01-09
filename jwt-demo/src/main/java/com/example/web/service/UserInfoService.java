@@ -2,7 +2,8 @@ package com.example.web.service;
 
 import com.example.web.entity.UserInfo;
 import com.example.web.repository.UserInfoRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -16,11 +17,15 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
 public class UserInfoService implements UserDetailsService {
 
-    private PasswordEncoder encoder;
-    private UserInfoRepository userRepository;
+    private final PasswordEncoder encoder;
+    private final UserInfoRepository userRepository;
+    @Autowired
+    public UserInfoService(PasswordEncoder encoder, UserInfoRepository userRepository) {
+        this.encoder = encoder;
+        this.userRepository = userRepository;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
@@ -31,11 +36,11 @@ public class UserInfoService implements UserDetailsService {
 
         //now we got userInfo object
         UserInfo user = userInfo.get();
-//        List<GrantedAuthority> authorities =
-//                List.of(new SimpleGrantedAuthority(user.getRoles()));
+        List<GrantedAuthority> authorities =
+                List.of(new SimpleGrantedAuthority(user.getRoles()));
         //Spring security understands UserDetails
-//        return new User(user.getEmail(),user.getPassword(),authorities);
-        return new UserInfoDetails(user);
+        return new User(user.getEmail(),user.getPassword(),authorities);
+//        return new User(user.getEmail(), user.getPassword(), user.getRoles());
     }
     public String addUser(UserInfo userInfo){
         userInfo.setPassword(encoder.encode(userInfo.getPassword()));
